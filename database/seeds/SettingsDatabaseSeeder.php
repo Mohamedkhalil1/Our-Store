@@ -17,7 +17,7 @@ class SettingsDatabaseSeeder extends Seeder
             'default_timezone' => 'Africa/Cairo',
             'reviews_enabled' => true,
             'auto_approve_reviews' => true,
-           // 'supported_currencies' => ['USD','LE','SAR'],
+            'supported_currencies' => ['USD','LE','SAR'],
             'default_currency' => 'USD',
             'store_email' => 'admin@store.com',
             'search_engine' => 'mysql',

@@ -29,6 +29,10 @@ class Settings extends Model
         if($key === 'translatable'){
             return static::setTranslatabeSettings($value);
         }
+
+        if(is_array($value)){
+            $value = json_encode($value);
+        }
         static::updateOrCreate(['key' => $key],['plain_value' => $value]);
     }
 

@@ -18,3 +18,8 @@ function uploadImage($folder,$image){
     $path = 'images/'.$folder.'/'.$filename;
     return $path;
 }
+
+function getFolder(){
+    $folder = app()->getLocale() === 'ar' ? 'css-rtl' : 'css';
+    return $folder;
+}

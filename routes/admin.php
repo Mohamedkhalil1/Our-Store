@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\Route;
 define('PAGINATION_COUNT',10);
 
 Route::group(['namespace' =>'Admin','middleware' => 'auth:admin'], function () {
-    Route::get('/', 'DashboardController@index')->name('admin.dashboard');
     ###########################################################################
     /* Languages Routes */
     Route::group(['prefix' => 'languages'], function () {
@@ -56,12 +55,42 @@ Route::group(['namespace' =>'Admin','middleware' => 'auth:admin'], function () {
         Route::get('changeStatus/{id}','VendorsController@changeStatus')->name('admin.vendors.status');
     });
     /* end Vendors Routes */
-    
 
+    ###############################################################################
+   
 });
 
-Route::group(['namespace' =>'Admin'], function () {
-    Route::get('/login','LoginController@getLogin')->name('get.admin.login');
-    Route::post('/login','LoginController@Login')->name('admin.login');
-    Route::get('/logout','LoginController@Logout')->name('admin.logout');
+
+
+Route::group(
+    [
+        'prefix' => LaravelLocalization::setLocale(),
+        'middleware' => [ 'localeSessionRedirect', 'localizationRedirect', 'localeViewPath' ]
+    ], function(){ 
+
+        
+    Route::group(['namespace' =>'Admin','prefix' =>'admin'], function () {
+        Route::get('/login','LoginController@getLogin')->name('get.admin.login');
+        Route::post('/login','LoginController@Login')->name('admin.login');
+        Route::get('/logout','LoginController@Logout')->name('admin.logout');
+    });
+
+
+    Route::group(['namespace' =>'Admin','middleware' => 'auth:admin','prefix' =>'admin'], function () {
+            Route::get('/', 'DashboardController@index')->name('admin.dashboard');
+
+            ## Shipping Routes 
+            Route::group(['prefix' => 'settings'], function () {
+                Route::get('shipping-methods/{type}','SettingsController@editShippingMethod')->name('edit.shipping.methods');
+                Route::post('shipping-methods/{id}','SettingsController@updateShippingMethod')->name('update.shipping.methods');
+            });
+            ## end Shipping Routes 
+
+        });
+       
+        
+   
+        
 });
+
+
