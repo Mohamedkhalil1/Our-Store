@@ -86,6 +86,15 @@ Route::group(
             });
             ## end Shipping Routes 
 
+            ## Shipping Routes 
+            Route::group(['prefix' => 'profile'], function () {
+                Route::get('edit','ProfileController@editProfile')->name('edit.profile');
+                Route::put('update','ProfileController@updateProfile')->name('update.profile');
+            });
+            ## end Shipping Routes 
+
+            
+
         });
        
         
