@@ -32,5 +32,9 @@ class Category extends Model
     public function getActive(){
         return   $this->is_active == 1 ? 'مفعل'  : 'غير مفعل';
     }
+
+    public function _parent(){
+        return $this->belongsTo(self::class,'parent_id');
+    }
     
 }

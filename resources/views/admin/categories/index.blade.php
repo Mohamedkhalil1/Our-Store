@@ -65,7 +65,7 @@
                                                         <td>{{$category -> name}}</td>
                                                         <td>{{$category -> slug}}</td>
                                                         @if($type !== TYPE)
-                                                        <td>{{$category->parent_id}}</td>
+                                                        <td>{{$category->_parent ? $category->_parent->name : ''}}</td>
                                                         @endif
                                                         <td>{{$category -> getActive()}}</td>
                                                         <td> <img style="width: 150px; height: 100px;" src=" "></td>
