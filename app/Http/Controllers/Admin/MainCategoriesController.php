@@ -3,171 +3,151 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\LanguageRequest;
-use App\Http\Requests\MainCategoryRequest;
-use App\Models\Language;
-use App\Models\Main_Category;
+use App\Http\Requests\MainCategoryReuest;
+use App\Models\Category;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class MainCategoriesController extends Controller
 {
-    public function index(){
-        $default_lang = get_default_lang(); 
-        $categories = Main_Category::where('translation_lang',$default_lang)->selection()->get();
-        return view('admin.maincategories.index',compact('categories'));
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index($type)
+    {
+        if($type === TYPE){
+            $categories = Category::parent()->orderBy('id','desc')->paginate(PAGINATION_COUNT); 
+        }else{
+            $categories = Category::child()->orderBy('id','desc')->paginate(PAGINATION_COUNT);
+        }
+        return view('admin.categories.index',compact('categories','type'));
     }
 
-    public function create(){
-        return view('admin.maincategories.create');
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create($type)
+    {
+        $categories = Category::parent()->get();
+        return view('admin.categories.create',compact('categories','type'));
     }
 
-    public function store(MainCategoryRequest $request){
-       
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(MainCategoryReuest $request)
+    {
         try{
-
-            if(!$request->has('active')){
-                $request->request->add(['active' => 0]);
-            }
-            $main_categories = collect($request->category);
-            $filter = $main_categories->filter(function($value,$key){
-                return $value['abbr'] === get_default_lang();
-            });
-            $default_category = array_values($filter->all())[0];
-            $filePath = "";
-            if($request->has('photo')){
-                $filePath = uploadImage('maincategories',$request->photo);
+            DB::beginTransaction();
+            //update 
+            if(!$request->has('is_active')){
+                $request->request->add(['is_active'=>0]);
+            }else{
+                $request->request->add(['is_active'=>1]);
             }
             
-            DB::beginTransaction();
-            $default_category_id = Main_Category::insertGetId([
-                'name' => $default_category['name'],
-                'translation_lang' => $default_category['abbr'],
-                'translation_off' => 0,
-                'slug' =>  $default_category['name'],
-                'active' => $default_category['active'],
-                'photo' => $filePath,
-            ]);
-
-            $categories = $main_categories->filter(function($value,$key){
-                return $value['abbr'] !== get_default_lang();
-            });
-            $categories_arr=[];
-            foreach($categories as $category){
-                $categories_arr[] = [
-                    'name' => $category['name'],
-                    'translation_lang' => $category['abbr'],
-                    'translation_off' => $default_category_id,
-                    'slug' =>  $category['name'],
-                    'active' => $category['active'],
-                    'photo' => $filePath,
-                ];
-            }
-            foreach($categories_arr as $category){
-                Main_Category::create($category);
-            }
+            $params = $request->except('_token');
+            $category = Category::create($params);
+            $category->name= $params['name'];
+            $category->save();
+            $type = $request->type;
             DB::commit();
-            return redirect()->route('admin.maincategories')->with(['success' => 'تم اضافه قسم بنجاح.']);
-        }
-        catch(\Exception $e){
-            DB::rollBack();
-            return redirect()->route('admin.maincategories')->with(['success' => 'هناك خطأ ما يرجو المحاوله تانيه.']);
+            
+            return redirect('admin/categories/'.$type)->with(['success' => 'تم الاضافه بنجاح']);
+        }catch(Exception $ex){
+            dd($ex);
+            DB::rollback();
+            return redirect()->back()->with(['error' => 'حدث خطأ']);
         }
     }
 
-    public function edit($id){
-        $mainCategory  = Main_Category::selection()->find($id);
-        if(!$mainCategory){
-            return redirect()->route('admin.maincategories')->with(['error' =>'هذه قسم غير موجوده']);
-        }
-        return view('admin.maincategories.edit',compact('mainCategory'));
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
     }
 
-    public function update(MainCategoryRequest $request , $id){
-       
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id,$type)
+    {
+        $category = Category::find($id);
+        $categories = Category::parent()->get();
+        return view('admin.categories.edit',compact('category','categories','type'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(MainCategoryReuest $request, $id)
+    {
+        
+        //validate 
         try{
-            if(!$request->has('active')){
-                $request->request->add(['active' => 0]);
-            }
-
-            $category = Main_Category::with('categories')
-                ->selection()
-                ->find($id);
-            if(!$category){
-                return redirect()->route('admin.maincategories.edit')->with(['error' =>'هذه قسم غير موجوده']);
-            }
-            if(!$request->has('category.0.active')){
-                $request->request->add(['active' => 0]);
+            DB::beginTransaction();
+            //update 
+            if(!$request->has('is_active')){
+                $request->request->add(['is_active'=>0]);
             }else{
-                $request->request->add(['active' => 1]);
+                $request->request->add(['is_active'=>1]);
             }
-
-            $params = array_values($request->category)[0];
-            Main_Category::where('id',$id)->first()->update([
-                'name' => $params['name'],
-                'active' =>$request->active,
-            ]);
-
-            if($request->has('photo')){
-                $filePath = uploadImage('maincategories',$request->photo);
-                Main_Category::where('id',$id)->first()->update([
-                    'photo' =>$filePath,
-                ]);
-            }
-            return redirect()->route('admin.maincategories')->with(['success' => 'تم تحديث قسم بنجاح.']);
-        }
-        catch(\Exception $e){
-
-            return redirect()->route('admin.maincategories')->with(['error' => 'هناك خطأ ما يرجو المحاوله تانيه.']);
-        } 
-    }
-
-    public function destory($id){
-        try{
-            DB::beginTransaction();
-            $category = Main_Category::find($id);
+            $category = Category::find($id);
             if(!$category){
-                return redirect()->route('admin.maincategories')->with(['error' =>'هذه القسم غير موجوده']);
+                return redirect()->back()->with(['fail' => 'هذا القسم غير موجود']);
             }
-            $vendors = $category->vendors()->get();
-            if(isset($vendors) && $vendors->count() > 0){
-                return redirect()->route('admin.maincategories')->with(['error' =>'لا يمكن حذف هذا القسم']);
-            }
+            $params = $request->except('_token','id');
+            $category->update($params);
+            $category->name= $params['name'];
+            $category->save();
+            $type=$request->type;
+            DB::commit();
+            return redirect('admin/categories/'.$type)->with(['success' => 'تم التحديث بنجاح']);
+        }catch(Exception $ex){
+            dd($ex);
+            DB::rollback();
+            return redirect()->back()->with(['fail' => 'حدث خطأ']);
+        }
+        
+    }
 
-            $image = Str::after($category->photo,'assets/');
-            $image = base_path('assets/'.$image); 
-            unlink($image);
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        try{            
+            $category = Category::find($id);
+            if(!$category){
+                return redirect()->back()->with(['fail' => 'هذا القسم غير موجود']);
+            }
             $category->delete();
-            DB::commit();
-            return redirect()->route('admin.maincategories')->with(['success' => 'تم حذف القسم بنجاح.']);
+            return redirect()->route('admin.maincategories.index')->with(['success' => 'تم حذف القسم بنجاح']);
+        }catch(Exception $ex){
+            return redirect()->back()->with(['fail' => 'حدث خطأ']);
         }
-        catch(\Exception $e){
-            DB::rollBack();
-            return redirect()->route('admin.maincategories')->with(['error' => 'هناك خطأ ما يرجو المحاوله تانيه.']);
-        } 
-
     }
-
-    public function changeStatus($id){
-        try{
-            DB::beginTransaction();
-            $mainCategory = Main_Category::find($id);
-            if(!$mainCategory){
-                return redirect()->route('admin.maincategories')->with(['error' =>'هذه القسم غير موجوده']);
-            }
-
-            $mainCategory->active = !$mainCategory->active;
-            $mainCategory->save();
-           
-            DB::commit();
-            return redirect()->route('admin.maincategories')->with(['success' => 'تم تغير الحاله بنجاح.']);
-        }
-        catch(\Exception $e){
-            DB::rollBack();
-            return redirect()->route('admin.maincategories')->with(['error' => 'هناك خطأ ما يرجو المحاوله تانيه.']);
-        } 
-    }
-
-    
 }

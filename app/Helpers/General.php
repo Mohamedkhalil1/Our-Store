@@ -3,6 +3,10 @@
 use App\Models\Language;
 use Illuminate\Support\Facades\Config;
 
+define('PAGINATION_COUNT',15);
+define('TYPE','parent');
+define('SUTYPE','child');
+
 function get_languages(){
 
     return Language::active()->selection()->get();

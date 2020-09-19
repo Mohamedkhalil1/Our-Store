@@ -14,7 +14,7 @@ use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 |
 */
 
-define('PAGINATION_COUNT',10);
+
 
 Route::group(['namespace' =>'Admin','middleware' => 'auth:admin'], function () {
     ###########################################################################
@@ -33,13 +33,7 @@ Route::group(['namespace' =>'Admin','middleware' => 'auth:admin'], function () {
     ###########################################################################
     /* Main Categories Routes */
     Route::group(['prefix' => 'main_categories'], function () {
-        Route::get('/','MainCategoriesController@index')->name('admin.maincategories');
-        Route::get('/create','MainCategoriesController@create')->name('admin.maincategories.create');
-        Route::post('/','MainCategoriesController@store')->name('admin.maincategories.store');
-        Route::get('edit/{id}','MainCategoriesController@edit')->name('admin.maincategories.edit');
-        Route::post('update/{id}','MainCategoriesController@update')->name('admin.maincategories.update');
-        Route::get('delete/{id}','MainCategoriesController@destory')->name('admin.maincategories.destory');
-        Route::get('changeStatus/{id}','MainCategoriesController@changeStatus')->name('admin.maincategories.status');
+       
     });
     /* end Main Categories Routes */
 
@@ -86,12 +80,24 @@ Route::group(
             });
             ## end Shipping Routes 
 
-            ## Shipping Routes 
+            ## Profile Routes 
             Route::group(['prefix' => 'profile'], function () {
                 Route::get('edit','ProfileController@editProfile')->name('edit.profile');
                 Route::put('update','ProfileController@updateProfile')->name('update.profile');
             });
-            ## end Shipping Routes 
+            ## end Profile Routes 
+
+             ## Categories Routes 
+             Route::group(['prefix' => 'categories'], function () {
+                Route::get('/{type}','MainCategoriesController@index')->name('admin.maincategories');
+                Route::get('create/{type}','MainCategoriesController@create')->name('admin.maincategories.create');
+                Route::post('store','MainCategoriesController@store')->name('admin.maincategories.store');
+                Route::get('show/{id}/{type}','MainCategoriesController@show')->name('admin.maincategories.show');
+                Route::get('edit/{id}/{type}','MainCategoriesController@edit')->name('admin.maincategories.edit');
+                Route::post('update/{id}','MainCategoriesController@update')->name('admin.maincategories.update');
+                Route::get('delete/{id}','MainCategoriesController@destroy')->name('admin.maincategories.delete');
+            });
+            ## end Categories Routes 
 
             
 
