@@ -21,7 +21,13 @@ class LoginController extends Controller
     }
 
     public function Logout(){
-        auth()->guard('admin')->logout();
+        //auth()->guard('admin')->logout();
+        $gaurd = $this->getGaurd();
+        $gaurd->logout();
         return redirect()->route('get.admin.login');
+    }
+
+    private function getGaurd(){
+        return auth('admin');
     }
 }
