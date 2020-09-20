@@ -43,27 +43,27 @@
                   class="badge badge badge-danger badge-pill float-right mr-2">{{App\Models\Category::child()->count()}}</span>
           </a>
               <ul class="menu-content">
-                  <li class="active"><a class="menu-item" href="{{route('admin.maincategories','SUTYPE')}}"
+                  <li class="active"><a class="menu-item" href="{{route('admin.maincategories',SUTYPE)}}"
                                         data-i18n="nav.dash.ecommerce"> عرض الكل </a>
                   </li>
-                  <li><a class="menu-item" href="{{route('admin.maincategories.create','SUTYPE')}}" data-i18n="nav.dash.crypto">أضافة
+                  <li><a class="menu-item" href="{{route('admin.maincategories.create',SUTYPE)}}" data-i18n="nav.dash.crypto">أضافة
                       قسم فرعي  </a>
                   </li>
               </ul>
           </li>
 
 
-          <li class="nav-item"><a href="{{route('admin.vendors.create')}}"><i class="la la-male"></i>
-              <span class="menu-title" data-i18n="nav.dash.main">الطلاب  </span>
+          <li class="nav-item"><a href=""><i class="la la-male"></i>
+              <span class="menu-title" data-i18n="nav.dash.main">الماركات</span>
               <span
-                  class="badge badge badge-warning  badge-pill float-right mr-2"></span>
+                  class="badge badge badge-warning  badge-pill float-right mr-2">{{App\Models\Brand::all()->count()}}</span>
           </a>
               <ul class="menu-content">
-                  <li class="active"><a class="menu-item" href=""
+                     <li class="active"><a class="menu-item" href="{{route('admin.brands')}}"
                                         data-i18n="nav.dash.ecommerce"> عرض الكل </a>
                   </li>
-                  <li><a class="menu-item" href="" data-i18n="nav.dash.crypto">أضافة
-                      طالب </a>
+                  <li><a class="menu-item" href="{{route('admin.brands.create')}}" data-i18n="nav.dash.crypto">أضافة
+                      ماركه جديده </a>
                   </li>
               </ul>
           </li>

@@ -69,6 +69,14 @@ return [
             'visibility' => 'public',
         ],
 
+        'brands' => [
+            'driver' => 'local',
+            'root' => base_path().'/assets/images/brands/',
+            'url' => env('APP_URL').'/public',
+            'visibility' => 'public',
+        ],
+
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

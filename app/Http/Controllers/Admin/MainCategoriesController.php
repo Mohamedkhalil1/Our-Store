@@ -60,8 +60,7 @@ class MainCategoriesController extends Controller
             $category->save();
             $type = $request->type;
             DB::commit();
-            
-            return redirect('admin/categories/'.$type)->with(['success' => 'تم الاضافه بنجاح']);
+            return redirect()->route('admin.maincategories',$type)->with(['success' => 'تم الاضافه بنجاح']);
         }catch(Exception $ex){
             dd($ex);
             DB::rollback();
@@ -89,6 +88,9 @@ class MainCategoriesController extends Controller
     public function edit($id,$type)
     {
         $category = Category::find($id);
+        if($category === null){
+            return redirect()->route('admin.maincategories',$type)->with(['error' => 'هذا القسم غير موجود']);
+        }
         $categories = Category::parent()->get();
         return view('admin.categories.edit',compact('category','categories','type'));
     }
@@ -102,7 +104,6 @@ class MainCategoriesController extends Controller
      */
     public function update(MainCategoryReuest $request, $id)
     {
-        
         //validate 
         try{
             DB::beginTransaction();
@@ -114,7 +115,7 @@ class MainCategoriesController extends Controller
             }
             $category = Category::find($id);
             if(!$category){
-                return redirect()->back()->with(['fail' => 'هذا القسم غير موجود']);
+                return redirect()->back()->with(['error' => 'هذا القسم غير موجود']);
             }
             $params = $request->except('_token','id');
             $category->update($params);
@@ -122,11 +123,11 @@ class MainCategoriesController extends Controller
             $category->save();
             $type=$request->type;
             DB::commit();
-            return redirect('admin/categories/'.$type)->with(['success' => 'تم التحديث بنجاح']);
+            return redirect()->route('admin.maincategories',$type)->with(['success' => 'تم التحديث بنجاح']);
         }catch(Exception $ex){
             dd($ex);
             DB::rollback();
-            return redirect()->back()->with(['fail' => 'حدث خطأ']);
+            return redirect()->back()->with(['error' => 'حدث خطأ']);
         }
         
     }
@@ -142,12 +143,12 @@ class MainCategoriesController extends Controller
         try{            
             $category = Category::find($id);
             if(!$category){
-                return redirect()->back()->with(['fail' => 'هذا القسم غير موجود']);
+                return redirect()->back()->with(['error' => 'هذا القسم غير موجود']);
             }
             $category->delete();
             return redirect()->route('admin.maincategories.index')->with(['success' => 'تم حذف القسم بنجاح']);
         }catch(Exception $ex){
-            return redirect()->back()->with(['fail' => 'حدث خطأ']);
+            return redirect()->back()->with(['error' => 'حدث خطأ']);
         }
     }
 }
