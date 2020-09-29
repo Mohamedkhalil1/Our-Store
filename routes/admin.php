@@ -111,6 +111,18 @@ Route::group(
             });
             ## end Brands Routes 
 
+            ## Tags Routes 
+            Route::group(['prefix' => 'tags'], function () {
+                Route::get('/','TagController@index')->name('admin.tags');
+                Route::get('create/','TagController@create')->name('admin.tags.create');
+                Route::post('store','TagController@store')->name('admin.tags.store');
+                Route::get('show/{id}/','TagController@show')->name('admin.tags.show');
+                Route::get('edit/{id}/','TagController@edit')->name('admin.tags.edit');
+                Route::post('update/{id}','TagController@update')->name('admin.tags.update');
+                Route::get('delete/{id}','TagController@destroy')->name('admin.tags.delete');
+            });
+            ## end Tags Routes 
+
             
 
         });

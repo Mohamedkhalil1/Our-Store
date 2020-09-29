@@ -12,7 +12,7 @@
                                 </li>
                                 <li class="breadcrumb-item"><a href="{{route('admin.maincategories',$type)}}"> الاقسام الرئيسية </a>
                                 </li>
-                                <li class="breadcrumb-item active"> {{$type === TYPE ? 'أضافه قسم رئيسي' : 'أضافه قسم فرعي'}}
+                                <li class="breadcrumb-item active"> {{$type ===  App\Http\Enumerations\CategoryType::category ? 'أضافه قسم رئيسي' : 'أضافه قسم فرعي'}}
                                 </li>
                             </ol>
                         </div>
@@ -26,7 +26,7 @@
                         <div class="col-md-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h4 class="card-title" id="basic-layout-form"> {{$type === 'TYPE' ? 'أضافه قسم رئيسي' : 'أضافه قسم فرعي'}} </h4>
+                                    <h4 class="card-title" id="basic-layout-form"> {{$type ===App\Http\Enumerations\CategoryType::category ? 'أضافه قسم رئيسي' : 'أضافه قسم فرعي'}} </h4>
                                     <a class="heading-elements-toggle"><i
                                             class="la la-ellipsis-v font-medium-3"></i></a>
                                     <div class="heading-elements">
@@ -64,7 +64,7 @@
                                             <div class="form-body">
 
                                                 <h4 class="form-section"><i class="ft-home"></i> بيانات القسم </h4>
-                                                @if($type !== TYPE)
+                                                @if($type !== App\Http\Enumerations\CategoryType::category)
                                                     <div class="row">
                                                         <div class="col-md-12">
                                                             <div class="form-group">
