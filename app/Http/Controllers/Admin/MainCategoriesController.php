@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Enumerations\CategoryType;
 use App\Http\Requests\MainCategoryReuest;
 use App\Models\Category;
 use Exception;
@@ -18,10 +19,10 @@ class MainCategoriesController extends Controller
      */
     public function index($type)
     {
-        if($type === TYPE){
+        if($type === CategoryType::category){
             $categories = Category::parent()->orderBy('id','desc')->paginate(PAGINATION_COUNT); 
         }else{
-            $categories = Category::child()->orderBy('id','desc')->paginate(PAGINATION_COUNT);
+            $categories = Category::with('_parent')->child()->orderBy('parent_id','ASC')->paginate(PAGINATION_COUNT);
         }
         return view('admin.categories.index',compact('categories','type'));
     }
@@ -33,7 +34,7 @@ class MainCategoriesController extends Controller
      */
     public function create($type)
     {
-        $categories = Category::parent()->get();
+        $categories = Category::all();
         return view('admin.categories.create',compact('categories','type'));
     }
 
@@ -91,7 +92,7 @@ class MainCategoriesController extends Controller
         if($category === null){
             return redirect()->route('admin.maincategories',$type)->with(['error' => 'هذا القسم غير موجود']);
         }
-        $categories = Category::parent()->get();
+        $categories = Category::where('id' ,'!=',$id)->get();
         return view('admin.categories.edit',compact('category','categories','type'));
     }
 
@@ -140,14 +141,18 @@ class MainCategoriesController extends Controller
      */
     public function destroy($id)
     {
-        try{            
+        try{   
+            DB::beginTransaction();           
             $category = Category::find($id);
             if(!$category){
                 return redirect()->back()->with(['error' => 'هذا القسم غير موجود']);
             }
             $category->delete();
+            $category->translations()->delete();
+            DB::commit();
             return redirect()->route('admin.maincategories.index')->with(['success' => 'تم حذف القسم بنجاح']);
         }catch(Exception $ex){
+            DB::rollback();
             return redirect()->back()->with(['error' => 'حدث خطأ']);
         }
     }

@@ -28,10 +28,10 @@
                   class="badge badge badge-danger badge-pill float-right mr-2">{{App\Models\Category::parent()->count()}}</span>
           </a>
               <ul class="menu-content">
-                  <li class="active"><a class="menu-item" href="{{route('admin.maincategories',TYPE)}}"
+                  <li class="active"><a class="menu-item" href="{{route('admin.maincategories',App\Http\Enumerations\CategoryType::category)}}"
                                         data-i18n="nav.dash.ecommerce"> عرض الكل </a>
                   </li>
-                  <li><a class="menu-item" href="{{route('admin.maincategories.create',TYPE)}}" data-i18n="nav.dash.crypto">أضافة
+                  <li><a class="menu-item" href="{{route('admin.maincategories.create',App\Http\Enumerations\CategoryType::category)}}" data-i18n="nav.dash.crypto">أضافة
                       قسم جديد </a>
                   </li>
               </ul>
@@ -43,10 +43,10 @@
                   class="badge badge badge-danger badge-pill float-right mr-2">{{App\Models\Category::child()->count()}}</span>
           </a>
               <ul class="menu-content">
-                  <li class="active"><a class="menu-item" href="{{route('admin.maincategories',SUTYPE)}}"
+                  <li class="active"><a class="menu-item" href="{{route('admin.maincategories',App\Http\Enumerations\CategoryType::subCategory)}}"
                                         data-i18n="nav.dash.ecommerce"> عرض الكل </a>
                   </li>
-                  <li><a class="menu-item" href="{{route('admin.maincategories.create',SUTYPE)}}" data-i18n="nav.dash.crypto">أضافة
+                  <li><a class="menu-item" href="{{route('admin.maincategories.create',App\Http\Enumerations\CategoryType::subCategory)}}" data-i18n="nav.dash.crypto">أضافة
                       قسم فرعي  </a>
                   </li>
               </ul>
@@ -64,6 +64,21 @@
                   </li>
                   <li><a class="menu-item" href="{{route('admin.brands.create')}}" data-i18n="nav.dash.crypto">أضافة
                       ماركه جديده </a>
+                  </li>
+              </ul>
+          </li>
+
+          <li class="nav-item"><a href=""><i class="la la-male"></i>
+              <span class="menu-title" data-i18n="nav.dash.main">التاجات</span>
+              <span
+                  class="badge badge badge-warning  badge-pill float-right mr-2">{{App\Models\Tag::all()->count()}}</span>
+          </a>
+              <ul class="menu-content">
+                     <li class="active"><a class="menu-item" href="{{route('admin.tags')}}"
+                                        data-i18n="nav.dash.ecommerce"> عرض الكل </a>
+                  </li>
+                  <li><a class="menu-item" href="{{route('admin.tags.create')}}" data-i18n="nav.dash.crypto">أضافة
+                      تاج جديده </a>
                   </li>
               </ul>
           </li>

@@ -148,19 +148,23 @@ class BrandController extends Controller
      */
     public function destroy($id)
     {
-        try{            
+        try{     
+            DB::beginTransaction();       
             $brand = Brand::find($id);
             if(!$brand){
                 return redirect()->back()->with(['error' => 'هذه الماركه غير موجوده']);
             }
             $brand->delete();
+            $brand->translations()->delete();
             if($brand->photo !== null){
                 $image = str_replace(url(''),'',$brand->photo);
                 $image = base_path($image); 
                 unlink($image);
             }
+            DB::commit();
             return redirect()->route('admin.brands')->with(['success' => 'تم حذف الماركه بنجاح']);
         }catch(Exception $ex){
+            DB::rollback();
             dd($ex);
             return redirect()->back()->with(['error' => 'حدث خطأ']);
         }
