@@ -32,6 +32,15 @@ class Product extends Model
         'deleted_at'
     ];
 
+
+    public function scopeSelection($query){
+        return $query->select('id','price','name','created_at');
+    }
+
+    public function getActive(){
+        return   $this->is_active == 1 ? 'مفعل'  : 'غير مفعل';
+    }
+
     public function brand(){
         return $this->belongsTo(Brand::class,'brand_id')->withDefault();
     }

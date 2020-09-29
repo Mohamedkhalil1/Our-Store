@@ -6,8 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\GeneralProductReuest;
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Product;
 use App\Models\Tag;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -16,9 +19,10 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($type)
+    public function index()
     {
-        
+        $products = Product::paginate(PAGINATION_COUNT);
+        return view('admin.products.general.index',compact('products'));
     }
 
     /**
@@ -52,13 +56,27 @@ class ProductController extends Controller
                 $request->request->add(['is_active'=>1]);
             }
             
-            $params = $request->except('_token');
-            $category = Category::create($params);
-            $category->name= $params['name'];
-            $category->save();
-            $type = $request->type;
+          
+            $product = Product::create([
+                'slug' => $request->slug,
+                'brand_id' => $request->brand_id,
+                'is_active' => $request->is_active
+            ]);
+            $product->name= $request->name;
+            $product->description= $request->description;
+            $product->short_description= $request->short_description;
+            $product->save();
+            
+            // save product with categories relations
+            $product->categories()->attach($request->categories); 
+            // end relation
+
+            // save product with tags relations
+            $product->tags()->attach($request->tags); 
+              // end relation
+
             DB::commit();
-            return redirect()->route('admin.maincategories',$type)->with(['success' => 'تم الاضافه بنجاح']);
+            return redirect()->route('admin.products')->with(['success' => 'تم الاضافه بنجاح']);
         }catch(Exception $ex){
             dd($ex);
             DB::rollback();
