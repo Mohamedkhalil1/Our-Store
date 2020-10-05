@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GeneralProductReuest;
+use App\Http\Requests\ProductPriceRequest;
+use App\Http\Requests\ProductStockRequest;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
@@ -81,6 +83,57 @@ class ProductController extends Controller
             dd($ex);
             DB::rollback();
             return redirect()->back()->with(['error' => 'حدث خطأ']);
+        }
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getPrice($id)
+    {
+        try{
+            $product = Product::findOrFail($id);
+        return view('admin.products.prices.create',compact('product'));
+        }catch(Exception $ex){
+            dd($ex);
+            return redirect()->back()->with(['error' => 'حدث خطأ']); 
+        }
+        
+    }
+
+    public function saveProductPrice(ProductPriceRequest $request){
+        try{
+            $params = $request->except('product_id','_token');
+            Product::findOrFail($request->product_id)->update($params);
+            return redirect()->route('admin.products')->with(['success' => 'تم التحديث بنجاح']);
+        }catch(Exception $ex){
+            dd($ex);
+            return redirect()->back()->with(['error' => 'حدث خطأ']); 
+        }
+    }
+
+    public function getStock($id)
+    {
+        try{
+            $product = Product::findOrFail($id);
+        return view('admin.products.stock.create',compact('product'));
+        }catch(Exception $ex){
+            dd($ex);
+            return redirect()->back()->with(['error' => 'حدث خطأ']); 
+        }
+        
+    }
+
+    public function saveProductStock(ProductStockRequest $request){
+        try{
+            $params = $request->except('product_id','_token');
+            Product::findOrFail($request->product_id)->update($params);
+            return redirect()->route('admin.products')->with(['success' => 'تم التحديث بنجاح']);
+        }catch(Exception $ex){
+            dd($ex);
+            return redirect()->back()->with(['error' => 'حدث خطأ']); 
         }
     }
 
