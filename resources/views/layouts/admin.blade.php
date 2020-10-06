@@ -49,6 +49,8 @@
     <link rel="stylesheet" type="text/css" href="{{asset('assets/admin/vendors/css/extensions/datedropper.min.css')}}">
     <link rel="stylesheet" type="text/css" href="{{asset('assets/admin/vendors/css/extensions/timedropper.min.css')}}">
     <!-- END Page Level CSS-->
+    <link rel="stylesheet" type="text/css" href="{{asset('assets/admin/css-rtl/plugins/forms/wizard.css')}}">
+    
     <!-- BEGIN Custom CSS-->
     <link rel="stylesheet" type="text/css" href="{{asset('assets/admin/'.getFolder().'/style-rtl.css')}}">
     <!-- END Custom CSS-->
@@ -76,6 +78,7 @@
 @notify_render
 
 <!-- BEGIN VENDOR JS-->
+<script src="{{asset('assets/admin/vendors/js/extensions/jquery.steps.min.js')}}" type="text/javascript"></script>
 <script src="{{asset('assets/admin/vendors/js/vendors.min.js')}}" type="text/javascript"></script>
 <!-- BEGIN VENDOR JS-->
 <script src="{{asset('assets/admin/vendors/js/tables/datatable/datatables.min.js')}}"
@@ -121,7 +124,10 @@
 <script src="{{asset('assets/admin/js/scripts/modal/components-modal.js')}}" type="text/javascript"></script>
 <script src="{{asset('assets/admin/vendors/js/editors/ckeditor/ckeditor.js')}}" type="text/javascript"></script>
 <script src="{{asset('assets/admin/js/scripts/editors/editor-ckeditor.js')}}" type="text/javascript"></script>
+<script src="{{asset('assets/admin/js/scripts/forms/wizard-steps.js')}}" type="text/javascript"></script>
+
 <script>
+    
     $('#meridians1').timeDropper({
         meridians: true,
         setCurrentTime: false

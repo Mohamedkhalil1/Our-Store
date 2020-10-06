@@ -21,12 +21,10 @@ class Product extends Model
     protected $casts = [
         'in_stock' => 'boolean',
         'is_active' => 'boolean',
-        'manage_stock' => 'boolean'
+        'manage_stock' => 'boolean',
     ];
 
     protected $dates = [
-        'special_price_start',
-        'special_price_end',
         'end_date',
         'start_date',
         'deleted_at'

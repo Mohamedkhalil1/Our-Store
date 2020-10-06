@@ -48,9 +48,6 @@
                                               method="POST"
                                               enctype="multipart/form-data">
                                             @csrf
-
-
-
                                             <div class="form-body">
 
                                                 <h4 class="form-section"><i class="ft-home"></i> البيانات الاساسية للمنتج   </h4>
@@ -215,7 +212,6 @@
 
                                     </div>
                                 </div>
-                            </div>
                         </div>
                     </div>
                 </section>
